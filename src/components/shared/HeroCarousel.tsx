@@ -63,6 +63,7 @@ export default function HeroCarousel() {
             "linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%)",
         }}
       >
+        
         {SLIDES.map((s, i) => {
           let offset = i - active;
           const half = Math.floor(n / 2);
