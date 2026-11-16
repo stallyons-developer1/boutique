@@ -37,3 +37,128 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Virtual (custom) scroll — like the real site, html/body stay overflow:hidden
+   and the content is moved with a transform. The `.smooth` class is added by
+   SmoothScroll on mount, so without JS the page still scrolls natively. */
+html.smooth,
+html.smooth body {
+  height: 100%;
+  overflow: hidden;
+}
+.smooth-wrapper {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+.smooth-content {
+  min-height: 100%;
+  will-change: transform;
+}
+
+/* --- gift button: dark frosted pill whose gold shine PULSES periodically:
+   a conic highlight travels round the border (masked to the edge) + a warm
+   band sweeps across, both fading in/out each 3.2s cycle. Custom-property
+   keyframes need @property so the values can be interpolated. --- */
+@property --gold-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 170deg;
+}
+@property --gold-x {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@keyframes gold-travel {
+  0% { --gold-angle: 170deg; }
+  70%, 100% { --gold-angle: 510deg; }
+}
+@keyframes gold-slide {
+  0% { --gold-x: 0%; }
+  66%, 100% { --gold-x: 100%; }
+}
+@keyframes gold-fade {
+  0% { opacity: 0; }
+  18%, 36% { opacity: 0.85; }
+  66%, 100% { opacity: 0; }
+}
+
+.gift-btn__bg {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(24, 19, 16, 0.62);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+}
+/* rotating gold ring — masked to the 1.5px border, pulses */
+.gift-btn__bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0deg,
+    rgba(217, 184, 120, 0) 15deg,
+    rgba(217, 184, 120, 0.3) 65deg,
+    rgba(244, 227, 181, 0.7) 100deg,
+    rgba(217, 184, 120, 0) 130deg,
+    transparent 360deg
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  animation:
+    gold-travel 3.2s cubic-bezier(0.45, 0.05, 0.35, 1) infinite,
+    gold-fade 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+/* warm band sweeping across, pulses */
+.gift-btn__warm {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(217, 184, 120, 0) calc(var(--gold-x) - 55%),
+    rgba(217, 184, 120, 0.22) var(--gold-x),
+    rgba(217, 184, 120, 0) calc(var(--gold-x) + 55%)
+  );
+  opacity: 0;
+  animation:
+    gold-slide 3.2s linear infinite,
+    gold-fade 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gift-btn__bg::before,
+  .gift-btn__warm {
+    animation: none;
+  }
+}
+
+/* a long placeholder scrolls once (marquee) to reveal the hidden end */
+@keyframes hint-marquee {
+  0%,
+  18% {
+    transform: translateX(0);
+  }
+  82%,
+  100% {
+    transform: translateX(var(--marquee-x, 0px));
+  }
+}
+.hint-marquee {
+  animation: hint-marquee 2.6s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hint-marquee {
+    animation: none;
+  }
+}

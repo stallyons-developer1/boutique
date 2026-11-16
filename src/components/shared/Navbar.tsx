@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/shared/Logo";
+import { useScrolled } from "@/lib/useScrolled";
 
 const links = [
   { href: "/products", label: "Shop" },
@@ -18,15 +19,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const scrolled = useScrolled();
 
   // compact = scrolled OR not on the home hero
   const compact = scrolled || !isHome;
@@ -34,7 +28,7 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed bg-transparent text-white inset-x-0 top-0 z-50 transition-all duration-300">
-        <div className="bg-[linear-gradient(#00000099, #ffffff00)] items-start relative mx-auto flex max-w-[1600px] items-center justify-between p-16 transition-all duration-300 sm:px-8">
+        <div className="bg-[linear-gradient(#00000099,_#ffffff00)] items-start relative mx-auto flex max-w-[1600px] items-center justify-between p-16 transition-all duration-300 sm:px-8">
           {/* left — menu */}
           <button
             onClick={() => setMenuOpen(true)}

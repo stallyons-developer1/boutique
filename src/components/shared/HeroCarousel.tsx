@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type Slide = { id: number; img: string; gradient: string; label: string };
@@ -20,31 +20,44 @@ const SLIDES: Slide[] = [
 export default function HeroCarousel() {
   const n = SLIDES.length;
   const [active, setActive] = useState(0);
-  const [spacing, setSpacing] = useState(360);
 
   const go = useCallback(
     (dir: number) => setActive((a) => (a + dir + n) % n),
     [n],
   );
 
-  // full-width: spacing scales with the viewport so slides reach both edges
-  useEffect(() => {
-    const update = () =>
-      setSpacing(Math.max(300, Math.min(window.innerWidth * 0.17, 540)));
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
   // // autoplay
   // useEffect(() => {
   //   const t = setInterval(() => setActive((a) => (a + 1) % n), 400);
   //   return () => clearInterval(t);
   // }, [n]);
+  const GAP = 28; // equal gap between card edges (px); negative = overlap
+  const scaleFor = (k: number) => (k === 0 ? 1 : 0.82);
+
+  // measure the real (unscaled) card width so gaps stay equal at any size
+  const cardRef = useRef<HTMLButtonElement>(null);
+  const [cardW, setCardW] = useState(340);
+  useEffect(() => {
+    const measure = () => {
+      if (cardRef.current) setCardW(cardRef.current.offsetWidth);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  function xFor(offset: number) {
+    const dir = Math.sign(offset);
+    let x = 0;
+    for (let k = 1; k <= Math.abs(offset); k++) {
+      x += (cardW * scaleFor(k - 1)) / 2 + GAP + (cardW * scaleFor(k)) / 2;
+    }
+    return dir * x;
+  }
 
   return (
     <section
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#0a0e1a]"
+      className="relative flex h-full text-center flex-col min-h-screen w-full items-center justify-center overflow-hidden bg-[#0a0e1a]"
       style={{
         backgroundImage: "url(/hero-bg.png)",
         backgroundSize: "cover",
@@ -52,10 +65,10 @@ export default function HeroCarousel() {
       }}
     >
       {/* slides track — faded on both sides */}
-      <div className="max-w-[1200px] relative w-full">
+      <div className=" w-dvw relative h-[70dvh] 2xl:w-[60dvw] max-h-[35dvh] md:max-h-[40dvh] 2xl:max-w-1100 max-w-[900px]">
 
       <div
-        className="relative h-[70vh] max-h-[560px] w-full"
+        className="relative h-full w-full"
         style={{
           WebkitMaskImage:
             "linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%)",
@@ -77,11 +90,12 @@ export default function HeroCarousel() {
           return (
             <button
               key={s.id}
+              ref={i === 0 ? cardRef : undefined}
               onClick={() => setActive(i)}
               aria-label={`Show ${s.label}`}
-              className="absolute left-1/2 top-1/2 h-[420px] w-[300px] transition-all duration-500 ease-out sm:h-[470px] sm:w-[340px]"
+              className="absolute left-1/2 top-1/2 h-full aspect-9/16 md:aspect-12/16 transition-all duration-500 ease-out "
               style={{
-                transform: `translate(-50%,-50%) translateX(${offset * spacing}px) scale(${scale})`,
+                transform: `translate(-50%,-50%) translateX(${xFor(offset)}px) scale(${scale})`,
                 zIndex: 50 - abs,
                 opacity: abs > 2 ? 0 : 1,
               }}
@@ -121,6 +135,10 @@ export default function HeroCarousel() {
         <Chevron dir="right" />
       </button>
       </div>
+      <h2 className="mt-8 text-[2.5rem] font-light text-white font-serif md:text-h3 2xl:text-h2 md:max-w-[32ch] 2xl:max-w-[22ch]">
+        Where ideas become endless possibilities
+      </h2>
+      <p className="text-base text-white font-light">Welcome to the Online Boutique</p>
     </section>
   );
 }
