@@ -44,7 +44,9 @@ export default function SnapScroll({ children }: { children: React.ReactNode }) 
   return (
     <>
       <main className={isHome ? "" : "pt-16"}>{children}</main>
-      <Footer />
+      <div className="snap-end">
+        <Footer />
+      </div>
     </>
   );
 }

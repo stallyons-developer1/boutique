@@ -38,13 +38,23 @@ body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Section-to-section scroll uses Tailwind's scroll-snap utilities:
-   `snap-y snap-proximity` on <html> + `snap-start` on each panel. Proximity
-   snaps you onto a panel when you settle near it, without ever trapping the
-   short footer. Reduced-motion users get plain free scrolling. */
+/* Section-to-section scroll = native CSS scroll-snap (the same technique the
+   reference uses: scroll-snap-type:y mandatory + snap-align start/end on the
+   panels). Mobile falls back to proximity so a tall section can't trap you;
+   reduced-motion disables snapping entirely. snap-start/snap-end come from
+   Tailwind utilities on the elements. */
+html {
+  scroll-snap-type: y proximity;
+  overscroll-behavior-y: none;
+}
+@media (min-width: 768px) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-snap-type: none !important;
+    scroll-snap-type: none;
   }
 }
 
