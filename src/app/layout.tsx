@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
-import GsapScroll from "@/components/shared/GsapScroll";
+import SnapScroll from "@/components/shared/SnapScroll";
 import BottomPrompt from "@/components/shared/BottomPrompt";
 
 const inter = Inter({
@@ -28,11 +28,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      className={`${inter.variable} ${playfair.variable} h-full snap-y snap-proximity antialiased`}
     >
       <body className="bg-background font-sans text-foreground">
         <Navbar />
-        <GsapScroll>{children}</GsapScroll>
+        <SnapScroll>{children}</SnapScroll>
         <BottomPrompt />
       </body>
     </html>

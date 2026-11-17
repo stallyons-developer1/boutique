@@ -38,22 +38,14 @@ body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Virtual (custom) scroll — like the real site, html/body stay overflow:hidden
-   and the content is moved with a transform. The `.smooth` class is added by
-   SmoothScroll on mount, so without JS the page still scrolls natively. */
-html.smooth,
-html.smooth body {
-  height: 100%;
-  overflow: hidden;
-}
-.smooth-wrapper {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-}
-.smooth-content {
-  min-height: 100%;
-  will-change: transform;
+/* Section-to-section scroll uses Tailwind's scroll-snap utilities:
+   `snap-y snap-proximity` on <html> + `snap-start` on each panel. Proximity
+   snaps you onto a panel when you settle near it, without ever trapping the
+   short footer. Reduced-motion users get plain free scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none !important;
+  }
 }
 
 /* --- gift button: dark frosted pill whose gold shine PULSES periodically:

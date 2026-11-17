@@ -11,12 +11,12 @@ export default function Home() {
   return (
     <>
       {/* hero — coverflow carousel (snap panel) */}
-      <div data-panel>
+      <div className="snap-start">
         <HeroCarousel />
       </div>
 
       {/* new arrivals (snap panel) */}
-      <section data-panel className="flex min-h-screen items-center bg-background">
+      <section className="snap-start flex min-h-screen items-center bg-background">
         <Container className="py-20">
           <Reveal>
             <div className="flex flex-wrap gap-2">
