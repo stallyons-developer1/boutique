@@ -10,24 +10,12 @@ export default function Home() {
 
   return (
     <>
-      {/* hero — carousel (snap section) */}
-      <div data-snap>
-        <HeroCarousel />
-      </div>
+      {/* hero — coverflow carousel */}
+      <HeroCarousel />
 
-      {/* new arrivals — full-screen section with parallax inner + veil (snaps) */}
-      <section
-        data-snap
-        data-section
-        className="relative flex h-screen items-center overflow-hidden bg-background"
-      >
-        {/* veil — darkens on enter/leave, clears when centred (opacity driven by SmoothScroll) */}
-        <div
-          data-veil
-          className="pointer-events-none absolute inset-0 z-10 bg-[#14110e] opacity-0"
-        />
-        <div data-parallax className="w-full will-change-transform">
-          <Container className="py-20">
+      {/* new arrivals */}
+      <section className="flex min-h-screen items-center bg-background">
+        <Container className="py-20">
           <Reveal>
             <div className="flex flex-wrap gap-2">
               {categories.map((c) => (
@@ -59,8 +47,7 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
-          </Container>
-        </div>
+        </Container>
       </section>
     </>
   );

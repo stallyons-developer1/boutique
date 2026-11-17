@@ -3,7 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import SmoothScroll from "@/components/shared/SmoothScroll";
+import NativeMain from "@/components/shared/NativeMain";
 import BottomPrompt from "@/components/shared/BottomPrompt";
 
 const inter = Inter({
@@ -33,10 +33,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="bg-background font-sans text-foreground">
         <Navbar />
-        <SmoothScroll>
-          <main>{children}</main>
-          <Footer />
-        </SmoothScroll>
+        <NativeMain>{children}</NativeMain>
+        <Footer />
         <BottomPrompt />
       </body>
     </html>
