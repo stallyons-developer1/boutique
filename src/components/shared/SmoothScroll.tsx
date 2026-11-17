@@ -46,9 +46,31 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const EASE = reduce ? 1 : 0.24; // pos lerp toward target
     const IDLE_MS = 80; // ms since last input => spring back
     const MAX_DRAG = 300; // cap so you can't rubber-band forever
+    const PARALLAX = 70; // px the inner content lags/leads its section
+    const VEIL_MAX = 0.25; // max darken of a section's veil during its transition
+
+    // each [data-section] gets a parallax inner + a veil overlay driven by scroll
+    let sections: {
+      top: number;
+      h: number;
+      inner: HTMLElement | null;
+      veil: HTMLElement | null;
+    }[] = [];
+    const measureSections = () => {
+      const cTop = content.getBoundingClientRect().top;
+      sections = Array.from(
+        content.querySelectorAll<HTMLElement>("[data-section]")
+      ).map((el) => ({
+        top: Math.round(el.getBoundingClientRect().top - cTop),
+        h: el.offsetHeight,
+        inner: el.querySelector<HTMLElement>("[data-parallax]"),
+        veil: el.querySelector<HTMLElement>("[data-veil]"),
+      }));
+    };
 
     const recalc = () => {
       max.current = Math.max(0, content.scrollHeight - window.innerHeight);
+      measureSections();
     };
     const clamp = (v: number) => Math.min(Math.max(v, 0), max.current);
 
@@ -155,6 +177,21 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       pos.current = Math.abs(targetPos - next) < 0.08 ? targetPos : next;
       content.style.transform = `translate3d(0, ${-pos.current}px, 0)`;
 
+      // per-section parallax + veil, driven by where each section sits on screen
+      const vh = window.innerHeight;
+      for (const s of sections) {
+        const center = s.top - pos.current + s.h / 2;
+        const k = Math.max(-1, Math.min(1, (center - vh / 2) / vh));
+        if (s.inner)
+          s.inner.style.transform = `translate3d(0, ${(k * PARALLAX).toFixed(
+            1
+          )}px, 0)`;
+        if (s.veil)
+          s.veil.style.opacity = `${(Math.min(1, Math.abs(k)) * VEIL_MAX).toFixed(
+            3
+          )}`;
+      }
+
       // publish scroll state for scroll-reactive UI (window.scrollY stays 0 here)
       const nowScrolled = pos.current > 30;
       const nowFar = pos.current > 200;
@@ -188,6 +225,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKey);
+      // clear imperatively-set styles so a dev HMR remount hydrates cleanly
+      sections.forEach((s) => {
+        if (s.inner) s.inner.style.transform = "";
+        if (s.veil) s.veil.style.opacity = "";
+      });
       root.classList.remove("smooth");
     };
   }, []);
