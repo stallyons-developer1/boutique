@@ -3,6 +3,7 @@ import EditorialSection from "@/components/shared/EditorialSection";
 import EditorialGrid from "@/components/shared/EditorialGrid";
 import NewArrivals from "@/components/shared/NewArrivals";
 import CreationsGrid from "@/components/shared/CreationsGrid";
+import ImmersiveQuote from "@/components/shared/ImmersiveQuote";
 
 export default function Home() {
   return (
@@ -23,6 +24,9 @@ export default function Home() {
 
       {/* selected creations — scrolling flex grid with hover zoom + reveal */}
       <CreationsGrid />
+
+      {/* immersive quote — full-screen serif line over a parallax veiled image */}
+      <ImmersiveQuote />
     </>
   );
 }
