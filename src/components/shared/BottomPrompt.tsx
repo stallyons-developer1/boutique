@@ -61,7 +61,7 @@ export default function BottomPrompt() {
       </button>
 
       {/* persistent prompt bar */}
-      <div className="pointer-events-auto w-full max-w-[420px]">
+      <div className="pointer-events-auto w-full max-w-[420px] mb-2">
         <AiPrompt />
       </div>
 

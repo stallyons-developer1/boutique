@@ -22,8 +22,8 @@ const cards = [
   { src: "/hero/01.jpeg", alt: "Suede shoulder bag" },
   { src: "/editorial/3.webp", alt: "Sequinned knit hood"},
   { src: "/editorial/2.webp", alt: "Shearling trapper hat" },
-  { src: "/editorial/5.webp", alt: "Metallic slingback heel" , big: true },
-  { src: "/hero/04.jpeg", alt: "Fur trapper hat" },
+  { src: "/editorial/5.webp", alt: "Metallic slingback heel" },
+  { src: "/hero/04.jpeg", alt: "Fur trapper hat" , big: true },
   // { src: "/hero/04.jpeg", alt: "Knit cardigan and felt hat", big: true },
   // { src: "/hero/05.jpeg", alt: "Winter carousel campaign" },
 ];

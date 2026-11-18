@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed bg-transparent text-white inset-x-0 top-0 z-50 transition-all duration-300">
-        <div className="bg-[linear-gradient(#00000099,_#ffffff00)] items-start relative mx-auto flex max-w-[1600px] items-center justify-between p-16 transition-all duration-300 sm:px-8">
+        <div className="bg-[linear-gradient(#00000099,_#ffffff00)] items-start relative mx-auto flex max-w-[1600px] items-center justify-between p-6 transition-all duration-300 sm:p-12">
           {/* left — menu */}
           <button
             onClick={() => setMenuOpen(true)}
