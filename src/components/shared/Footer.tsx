@@ -20,7 +20,7 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-border bg-card">
+    <footer className=" border-t border-border bg-card">
       <Container className="grid grid-cols-2 gap-10 py-14 md:grid-cols-5">
         {/* brand + newsletter */}
         <div className="col-span-2">

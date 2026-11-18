@@ -15,9 +15,17 @@ import { useEffect, useRef, useState } from "react";
 const QUOTE =
   "True elegance is never loud — it lingers in the quiet precision of every seam and the calm of considered design.";
 
-const STAGGER = 11; // ms added per character
-const DUR = 650; // ms per-character reveal duration
-const EASE = "cubic-bezier(0.16,1,0.3,1)"; // expo-out
+// ---- reveal (measured frame-by-frame from the live site) ----
+// The whole line RISES once as a block (container translate 43px→0), while each
+// LETTER focus-fades in — opacity 0→1 AND blur 22px→0 — staggered ~19ms apart.
+// Letters do NOT translate individually. Easing ≈ power2.out (easeOutQuad).
+const STAGGER = 19; //    ms between each letter starting (measured ~18.6)
+const CHAR_DUR = 900; //  ms each letter takes to fade + un-blur (measured ~924)
+const CHAR_BLUR = 22; //  px start blur per letter → 0 (focus-in; measured ~22)
+const RISE = 43; //       px the whole block rises from → 0 (measured ~43)
+const RISE_DUR = 1900; // ms for the block to rise (measured ~1900)
+const EASE = "cubic-bezier(0.25,0.46,0.45,0.94)"; // ~power2.out
+// -------------------------------------------------------------
 
 // split into words (kept whole so they wrap cleanly), each with per-char indices
 const WORDS: { ch: string; i: number }[][] = (() => {
@@ -125,18 +133,24 @@ export default function ImmersiveQuote() {
       <div className="relative z-10 flex flex-col items-center gap-12 px-6 text-center sm:gap-16">
         <Ornament shown={shown} delay={0} />
 
-        <p className="max-w-[14.7em] font-serif text-[clamp(1.9rem,4.6vw,3.5rem)] font-light leading-[1.12] text-white">
+        {/* the whole line rises once as a block (container transform) */}
+        <p
+          className="max-w-[14.7em] font-serif text-[clamp(1.9rem,4.6vw,3.5rem)] font-light leading-[1.12] text-white will-change-transform"
+          style={{
+            transform: shown ? "translateY(0)" : `translateY(${RISE}px)`,
+            transition: `transform ${RISE_DUR}ms ${EASE}`,
+          }}
+        >
           {WORDS.map((word, wi) => (
             <span key={wi} className="inline-block whitespace-nowrap">
               {word.map(({ ch, i }) => (
                 <span
                   key={i}
-                  className="inline-block will-change-[opacity,transform,filter]"
+                  className="inline-block will-change-[opacity,filter]"
                   style={{
                     opacity: shown ? 1 : 0,
-                    filter: shown ? "blur(0px)" : "blur(8px)",
-                    transform: shown ? "translateY(0)" : "translateY(0.32em)",
-                    transition: `opacity ${DUR}ms ${EASE}, filter ${DUR}ms ${EASE}, transform ${DUR}ms ${EASE}`,
+                    filter: shown ? "blur(0px)" : `blur(${CHAR_BLUR}px)`,
+                    transition: `opacity ${CHAR_DUR}ms ${EASE}, filter ${CHAR_DUR}ms ${EASE}`,
                     transitionDelay: `${i * STAGGER}ms`,
                   }}
                 >
