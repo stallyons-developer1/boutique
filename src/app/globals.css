@@ -44,16 +44,22 @@ body {
    reduced-motion disables snapping entirely. snap-start/snap-end come from
    Tailwind utilities on the elements. */
 html {
-  scroll-snap-type: y proximity;
   overscroll-behavior-y: none;
 }
+/* snapping is enabled ONLY on the home experience; SnapScroll sets
+   data-snap="on" there. Other routes (product listing, cart, …) scroll
+   normally — otherwise mandatory snap would jump to the footer's snap-end
+   (the only snap point on those pages) and land at the bottom on load. */
+html[data-snap="on"] {
+  scroll-snap-type: y proximity;
+}
 @media (min-width: 768px) {
-  html {
+  html[data-snap="on"] {
     scroll-snap-type: y mandatory;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html[data-snap="on"] {
     scroll-snap-type: none;
   }
 }

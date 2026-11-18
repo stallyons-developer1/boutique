@@ -19,10 +19,13 @@ export default function SnapScroll({ children }: { children: React.ReactNode }) 
   // reset flags on route change (new page starts at the top)
   useEffect(() => {
     const root = document.documentElement;
+    // scroll-snap is only for the home experience; elsewhere it would snap to
+    // the footer (the only snap point) and land the page at the bottom on load
+    root.dataset.snap = isHome ? "on" : "off";
     root.dataset.scrolled = "false";
     root.dataset.scrolledFar = "false";
     window.dispatchEvent(new Event("scrollstate"));
-  }, [pathname]);
+  }, [pathname, isHome]);
 
   useEffect(() => {
     const root = document.documentElement;
